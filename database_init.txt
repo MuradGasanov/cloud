@@ -1,0 +1,6 @@
+mysql -uroot -p'ROOTPASSWORD'
+
+
+CREATE DATABASE cloud CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE USER 'cloud'@'localhost' IDENTIFIED BY 'cloud';
+GRANT ALL PRIVILEGES ON cloud.* TO ‘cloud'@'localhost';

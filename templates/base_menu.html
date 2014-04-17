@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block navbar_menu %}
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+        <ul class="nav navbar-nav navbar-right">
+            <li><a id="logout" href="#">Выход</a></li>
+        </ul>
+    </div>
+    <script src="{% static "js/base_menu.js" %}"></script>
+    <!-- /.navbar-collapse -->
+{% endblock %}

@@ -1,0 +1,90 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel='shortcut icon' href="{% static "img/favicon.ico" %}" type='image/x-icon'/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="{% static "css/reset.css" %}"/>
+
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-theme.min.css" %}"/>
+
+    <link rel="stylesheet" href="{% static "kendo/css/kendo.common.min.css" %}"/>
+    <link rel="stylesheet" href="{% static "kendo/css/kendo.bootstrap.min.css" %}"/>
+
+    <link rel="stylesheet" href="{% static "css/base.css" %}"/>
+
+    {% block style %}
+    {% endblock %}
+
+    <script src="{% static "js/jquery-1.9.1.min.js" %}"></script>
+    <script src="{% static "js/base.js" %}"></script>
+
+    {% block script %}
+    {% endblock %}
+
+</head>
+<body>
+<span id="k-notification" style="display:none;"></span>
+<script id="errorTemplate" type="text/x-kendo-template">
+    <div class="error-noti">
+        <img src="{% static "img/base/error-icon.png" %}" />
+        <h3>#= title #</h3>
+        <p>#= message #</p>
+    </div>
+</script>
+
+<script id="keepCalmTemplate" type="text/x-kendo-template">
+    <div class="wait-noti">
+        <img src="{% static "img/base/clock-icon.png" %}" />
+        <h3>#= message #</h3>
+    </div>
+</script>
+
+<script id="doneTemplate" type="text/x-kendo-template">
+    <div class="done-noti">
+        <img src="{% static "img/base/done-icon.png" %}" />
+        <h3>#= message #</h3>
+    </div>
+</script>
+<div class="container">
+    {% block navbar %}
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <a id="logo" href="#">
+                    <img src="{% static "img/base/logo_b.png" %}" alt=""/>
+                </a>
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Название </a>
+                </div>
+
+                {% block navbar_menu %}
+                {% endblock %}
+            </div>
+            <!-- /.container-fluid -->
+        </nav>
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+
+</div>
+
+</div>
+<script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+{% block footer_script %}
+{% endblock %}
+</body>
+</html>

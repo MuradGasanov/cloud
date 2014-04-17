@@ -1,0 +1,94 @@
+{% extends "base_menu.html" %}
+{% load staticfiles %}
+{% block title %}Пользователи{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{% static "css/users.css" %}"/>
+{% endblock %}
+{% block script %}
+    <script src="{% static "kendo/js/kendo.web.min.js" %}"></script>
+    <script src="{% static "js/users.js" %}"></script>
+{% endblock %}
+{% block content %}
+    <div id="users"></div>
+
+    <div id="change_users_window" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Редактирование пользователей</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="change_users" class="k-edit-form-container" style="width: inherit;">
+                            <div class="k-edit-label">
+                                <label>Логин<span class="required">*</span>:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input type="text" class="k-textbox" name="username" required placeholder="Логин"
+                                       style="width: 100%"
+                                       data-bind="value: o.username, disabled: o.is_user_edit"/>
+                            </div>
+                            <div class="k-edit-label">
+                                <label>Пароль<span class="required"
+                                                   data-bind="invisible: o.is_user_edit">*</span>:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input type="text" class="k-textbox" name="password" required placeholder="Пароль"
+                                       style="width: 100%"
+                                       data-bind="value: o.password"/>
+
+                                <div style="margin: 7px 0 0; font-size: 10px; text-align: center;"
+                                     data-bind="visible: o.is_user_edit">Если вы не хотите менять пароль, просто оставьте
+                                    пустым это поле.
+                                </div>
+                            </div>
+                            <div class="k-edit-label">
+                                <label>Имя:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input type="text" class="k-textbox" name="first_name" placeholder="Имя"
+                                       style="width: 100%"
+                                       data-bind="value: o.first_name"/>
+                            </div>
+                            <div class="k-edit-label">
+                                <label>Почта<span class="required">*</span>:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input type="text" class="k-textbox" name="email" required placeholder="Почта"
+                                       style="width: 100%"
+                                       data-bind="value: o.email"/>
+                            </div>
+                            <div class="k-edit-label">
+                                <label>Администратор:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <label><input type="checkbox"
+                                              data-bind="checked: o.is_superuser, disabled: false" /></label>
+                            </div>
+
+{#                            <div class="k-edit-buttons k-state-default">#}
+{#                                <a class="k-button k-button-icontext k-grid-update" id="user_save" href="#">#}
+{#                                    <span class="k-icon k-update"></span>Сохранить#}
+{#                                </a>#}
+{#                                <a class="k-button k-button-icontext k-grid-cancel" id="user_cancel" href="#">#}
+{#                                    <span class="k-icon k-cancel"></span>Отмена#}
+{#                                </a>#}
+{#                            </div>#}
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Закрыть</button>
+                        <button id="user_save" type="button" class="btn btn-primary btn-sm">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/x-kendo-template" id="users_header_template">
+        <span class="k-button add_user"><span class="k-icon k-i-plus"></span> Добавить пользователя</span>
+        <span class="k-button reload_users" title="Перезагрузить таблицу"><span class="k-icon k-i-refresh"></span></span>
+    </script>
+{% endblock %}

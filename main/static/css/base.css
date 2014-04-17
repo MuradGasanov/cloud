@@ -1,0 +1,97 @@
+body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    color: #777;
+    background-color: #eee;
+    font: normal 12px/14px Arial, Helvetica, Sans-serif;
+}
+
+.clear {
+    clear: both;
+}
+
+.required {
+    color: #f00;
+}
+
+.k-notification-error.k-group {
+    background: rgba(255,0,0,.7);
+    border-color: rgb(255,0,0);
+    color: #ffffff;
+}
+.error-noti {
+    width: 500px;
+    height: 100px;
+}
+.error-noti h3 {
+    font-size: 1.4em;
+    padding: 32px 10px 5px;
+    font-weight: bold;
+    margin: 0;
+}
+.error-noti img {
+    float: left;
+    margin: 30px 15px 30px 30px;
+}
+
+.k-notification-wait.k-group {
+    background: rgba(0, 0, 153, 0.70);
+    border-color: rgb(0, 0, 153);
+    color: #fff;
+}
+.wait-noti {
+    width: 240px;
+    height: 100px;
+    padding: 0 30px;
+    line-height: 100px;
+}
+.wait-noti h3 {
+    font-size: 2.5em;
+    margin: 0;
+    line-height: 37px;
+    font-weight: normal;
+    display: inline-block;
+    vertical-align: middle;
+}
+.wait-noti img {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.k-notification-done.k-group {
+    background: rgba(0%,60%,0%,.7);
+    border-color: rgb(0%,60%,0%);
+    color: #fff;
+}
+.done-noti {
+    width: 240px;
+    height: 100px;
+    padding: 0 30px;
+    line-height: 100px;
+}
+.done-noti h3 {
+    font-size: 2.5em;
+    margin: 0;
+    line-height: 37px;
+    font-weight: normal;
+    display: inline-block;
+    vertical-align: middle;
+}
+.done-noti img {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+#logo{float:left;}
+.navbar-collapse .navbar-nav.navbar-left:first-child { margin-left: 0; }
+
+
+.k-edit-label, .k-edit-form-container .editor-label {
+    width: 20%;
+}
+
+.k-edit-field, .k-edit-form-container .editor-field {
+    width: 73%;
+}

@@ -1,0 +1,68 @@
+.section {
+    background-image: -webkit-linear-gradient(top,#fff 0,#f8f8f8 100%);
+    background-image: linear-gradient(to bottom,#fff 0,#f8f8f8 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff8f8f8', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+#project_tree {
+    color: #333;
+    padding-bottom: 2px;
+    font-size: 15px;
+}
+
+#project_tree .k-item {
+    white-space: normal;
+}
+
+#project_tree .k-button {
+    padding: 0 7px 0;
+}
+
+.tree-item {
+
+}
+
+.tree-add-item {
+    color: #A7A7A7;
+}
+.k-state-selected .tree-add-item,
+.k-state-focused .tree-add-item {
+    color: #eee;
+}
+.k-state-focused:active .tree-add-item {
+    color: #313131;
+}
+
+.tree-item-buttons {
+    display: none;
+    font-size: 11px;
+    position: relative;
+    top: -3px;
+    margin-bottom: -3px;
+}
+
+.tree-item:hover > .tree-item-buttons {
+    display: inline-block;
+}
+
+.k-state-selected .tree-item > .tree-item-buttons {
+    display: inline-block;
+}
+
+#back {
+    float: right;
+}
+
+#back:after {
+    content: " ";
+    clear: both;
+}

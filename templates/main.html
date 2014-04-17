@@ -1,0 +1,156 @@
+{% extends "base_menu.html" %}
+{% load staticfiles %}
+{% block title %}Главная страница{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{% static "css/main.css" %}"/>
+{% endblock %}
+{% block script %}
+    <script src="{% static "kendo/js/kendo.web.min.js" %}"></script>
+    <script src="{% static "js/main/project_tree.js" %}"></script>
+    <script src="{% static "js/main/nii.js" %}"></script>
+    <script src="{% static "js/main/main.js" %}"></script>
+{% endblock %}
+{% block content %}
+    <div class="tree section">
+        <div id="project_tree"></div>
+    </div>
+
+    <div class="nii section" > <!-- style="display: none" -->
+        <span id="back" class="k-button"><span class="glyphicon glyphicon-arrow-up"> Показать проекты</span></span>
+        <input id="nii"/>
+        <span id="nii_add" class="k-button"><span class="glyphicon glyphicon-plus"></span></span>
+        <span id="nii_edit" class="k-button"><span class="glyphicon glyphicon-pencil"></span></span>
+        <span id="nii_delete" class="k-button"><span class="glyphicon glyphicon-remove"></span></span>
+    </div>
+
+    <div id="change_direction_window" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Редактирование направления</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="change_direction" class="k-edit-form-container" style="width: inherit;">
+                            <div class="k-edit-label">
+                                <label>Название<span class="required">*</span>:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input type="text" class="k-textbox" name="name" required
+                                       placeholder="Название направления"
+                                       style="width: 100%"
+                                       data-bind="value: name"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Закрыть</button>
+                        <button id="direction_save" type="button" class="btn btn-primary btn-sm">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="change_project_window" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Редактирование проекта</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="change_project" class="k-edit-form-container" style="width: inherit;">
+                            <div class="k-edit-label">
+                                <label>Название<span class="required">*</span>:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input type="text" class="k-textbox" name="name" required placeholder="Название проекта"
+                                       style="width: 100%"
+                                       data-bind="value: name"/>
+                            </div>
+                            <div class="k-edit-label">
+                                <label>Описание:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <textarea
+                                        placeholder="Описание проекта" class="k-textbox"
+                                        data-bind="value: description" style="width: 100%; height: 150px;"> </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Закрыть</button>
+                        <button id="project_save" type="button" class="btn btn-primary btn-sm">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="add_nii_window" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Редактирование проекта</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="add_nii" class="k-edit-form-container" style="width: inherit;">
+                            <div class="k-edit-label">
+                                <label>Выберите Нии из списка<span class="required">*</span>:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input data-role="combobox"
+                                        data-auto-bind="false"
+                                        data-value-primitive="true"
+                                        data-text-field="name"
+                                        data-value-field="id"
+                                        data-bind="source: nii_list, value: selected_nii, events: {change: onChange}"
+                                        style="width: 100%"
+                                        required
+                                        />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Закрыть</button>
+                        <button id="add_nii_save" type="button" class="btn btn-primary btn-sm">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script id="project_tree_template" type="text/kendo-ui-template">
+        # if (item.type.substring(0, 4) == "add_") { #
+            <span class="tree-item tree-add-item">#: item.name #
+                <span class="tree-item-buttons">
+                    <span data-id="#: item.id #" class="k-button #: item.type#"><span class="glyphicon glyphicon-plus"></span></span></span>
+                </span>
+        # } else if (item.type == "nii") { #
+            <span class="tree-item">#: item.name #
+                <span class="tree-item-buttons">
+                    <span data-id="#: item.id #" class="k-button more_#: item.type#">Подробнее...</span>
+                    <span data-id="#: item.id #" class="k-button delete_#: item.type#"><span class="glyphicon glyphicon-remove"></span></span>
+                </span>
+            </span>
+        # } else { #
+            <span class="tree-item">#: item.name #
+                <span class="tree-item-buttons">
+                    <span data-id="#: item.id #" class="k-button edit_#: item.type#"><span class="glyphicon glyphicon-pencil"></span></span>
+                    <span data-id="#: item.id #" class="k-button delete_#: item.type#"><span class="glyphicon glyphicon-remove"></span></span>
+                </span>
+            </span>
+        # } #
+    </script>
+{% endblock %}
