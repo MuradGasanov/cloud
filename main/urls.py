@@ -23,9 +23,17 @@ urlpatterns = patterns('main.views',
     url(r'project_tree/project/update', ProjectTree.Project.update),
     url(r'project_tree/project/destroy', ProjectTree.Project.destroy),
 
-    url(r'project_tree/nii/read', ProjectTree.Nii.read),
-    url(r'project_tree/nii/add_direction', ProjectTree.Nii.add_direction),
-    url(r'project_tree/nii/destroy', ProjectTree.Nii.destroy),
+    url(r'nii/add_project', Nii.add_project),
+    url(r'nii/remove_project', Nii.remove_project),
+    url(r'nii/read', Nii.read),
+    url(r'nii/create', Nii.create),
+    url(r'nii/update', Nii.update),
+    url(r'nii/get_project', Nii.get_project),
 
-    url(r'nii/read', ProjectTree.Nii.read),
+    url(r'university/read', University.read),
+
+    url(r'employee/read', Employee.read),
+
+    url(r'post/read', Post.read)
+
 )

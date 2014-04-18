@@ -95,3 +95,7 @@ body {
 .k-edit-field, .k-edit-form-container .editor-field {
     width: 73%;
 }
+
+.k-widget.k-tooltip-validation {
+    margin-top: 5px;
+}

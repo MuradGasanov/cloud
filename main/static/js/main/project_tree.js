@@ -24,7 +24,7 @@ var Project_tree = (function () {
                 done: "Выполнено"
             };
 
-            var DONE_TIME_OUT = 2000;
+            var DONE_TIME_OUT = 1500;
 
             var PROJECT_TREE_BASE_URL = "project_tree/",
                 dataSource = new kendo.data.HierarchicalDataSource({
@@ -53,6 +53,9 @@ var Project_tree = (function () {
                     }
                 });
 
+
+            var node = null;
+
             var $project_tree = $("#project_tree");
             var project_tree = $project_tree.kendoTreeView({
                 dataSource: dataSource,
@@ -78,7 +81,6 @@ var Project_tree = (function () {
                 $change_direction_window.modal("show");
             });
 
-            var node;
             $project_tree.on("click", ".edit_direction", function (e) {
                 $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
                 var $this = $(this);
@@ -174,7 +176,7 @@ var Project_tree = (function () {
                 $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
                 var $this = $(this);
                 node = $this.closest(".k-item");
-                var uid = node.data("uid"),
+                var uid = project_tree.parent(node).data("uid"),
                     dataItem = project_tree.dataSource.getByUid(uid);
                 project_model.set("is_edit", false);
                 project_model.set("id", 0);
@@ -294,33 +296,55 @@ var Project_tree = (function () {
             var add_nii_validator = $add_nii.kendoValidator(validator_option).data("kendoValidator");
             var $add_nii_window = $("#add_nii_window");
 
+            function nii_list_update(data) {
+                if (node) {
+                    data = typeof data == "undefined" ? null : data;
+                    if (data) {
+                        $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
+                        var dataSource = add_nii_model.get("nii_list");
+                        dataSource.push(data);
+                        add_nii_model.set("nii_list", dataSource);
+                        add_nii_model.set("is_edit", false);
+                        add_nii_model.set("selected_nii", data.id);
+                        $("#add_nii_save").click();
+                        return false;
+                    }
+                    var uid = project_tree.parent(node).data("uid"),
+                        dataItem = project_tree.dataSource.getByUid(uid);
+                    var send = {
+                        id: dataItem.id,
+                        project_id: project_tree.dataSource.getByUid(
+                            project_tree.parent(node).data("uid")
+                        ).id
+                    };
+                    $.ajax({
+                        url: "nii/read/",
+                        dataType: "json",
+                        type: "POST",
+                        data: { item: JSON.stringify(send) },
+                        success: function (result) {
+                            add_nii_model.set("nii_list", result.nii_list);
+                            add_nii_model.set("is_edit", false);
+                            add_nii_model.set("selected_nii", null);
+                            $add_nii_window.modal("show");
+                        },
+                        error: function (result) {
+                            noti({title: MESSAGE.error + result.status, message: result.statusText}, "error");
+                        }
+                    });
+                }
+                return false;
+            }
+
             $project_tree.on("click", ".add_nii", function (e) {
                 $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
                 var $this = $(this);
                 node = $this.closest(".k-item");
-                var uid = node.data("uid"),
-                    dataItem = project_tree.dataSource.getByUid(uid);
-                var send = {
-                    id: dataItem.id,
-                    project_id: project_tree.dataSource.getByUid(
-                        project_tree.parent(node).data("uid")
-                    ).id
-                };
-                $.ajax({
-                    url: PROJECT_TREE_BASE_URL + "nii/read/",
-                    dataType: "json",
-                    type: "POST",
-                    data: { item: JSON.stringify(send) },
-                    success: function (result) {
-                        add_nii_model.set("nii_list", result.nii_list);
-                        add_nii_model.set("is_edit", false);
-                        add_nii_model.set("selected_nii", null);
-                        $add_nii_window.modal("show");
-                    },
-                    error: function (result) {
-                        noti({title: MESSAGE.error + result.status, message: result.statusText}, "error");
-                    }
-                });
+                nii_list_update();
+            });
+
+            $(window).on("nii_update_complete", function (e, data) {
+                nii_list_update(data);
             });
 
             $project_tree.on("click", ".delete_nii", function (e) {
@@ -336,7 +360,7 @@ var Project_tree = (function () {
                     ).id
                 };
                 noti({message: MESSAGE.wait}, "wait");
-                $.post(PROJECT_TREE_BASE_URL + "nii/destroy/",
+                $.post("nii/remove_project/",
                     { item: JSON.stringify(send) },function (data) {
                         noti({message: MESSAGE.done}, "done", DONE_TIME_OUT);
                         project_tree.remove(node);
@@ -354,7 +378,7 @@ var Project_tree = (function () {
                 };
                 noti({message: MESSAGE.wait}, "wait");
                 if (!add_nii_model.get("is_edit")) {
-                    $.post(PROJECT_TREE_BASE_URL + "nii/add_direction/",
+                    $.post("nii/add_project/",
                         {item: JSON.stringify(send) },function (data) {
                             noti({message: MESSAGE.done}, "done", DONE_TIME_OUT);
                             project_tree.append(
@@ -378,7 +402,7 @@ var Project_tree = (function () {
             $project_tree.on("click", ".more_nii", function (e) {
                 var $this = $(this);
                 var id = $this.data("id");
-                $(window).trigger('show_nii', {id: id});
+                $(window).trigger('show_nii', id);
             });
         }
     }

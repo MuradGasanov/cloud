@@ -1,3 +1,7 @@
+html {
+    overflow-y: scroll;
+}
+
 .section {
     background-image: -webkit-linear-gradient(top,#fff 0,#f8f8f8 100%);
     background-image: linear-gradient(to bottom,#fff 0,#f8f8f8 100%);
@@ -64,4 +68,12 @@
 #back:after {
     content: " ";
     clear: both;
+}
+
+.nii_info {
+    margin-top: 10px;
+}
+
+#nii_projects, #nii_employee {
+    margin-top: 10px;
 }

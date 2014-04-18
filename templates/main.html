@@ -17,10 +17,16 @@
 
     <div class="nii section" > <!-- style="display: none" -->
         <span id="back" class="k-button"><span class="glyphicon glyphicon-arrow-up"></span>Показать проекты</span>
-        <input id="nii"/>
-        <span id="nii_add" class="k-button"><span class="glyphicon glyphicon-plus"></span></span>
-        <span id="nii_edit" class="k-button"><span class="glyphicon glyphicon-pencil"></span></span>
-        <span id="nii_delete" class="k-button"><span class="glyphicon glyphicon-remove"></span></span>
+        <input id="nii" style="width: 500px"/>
+        <span class="nii_new k-button"><span class="glyphicon glyphicon-plus"></span></span>
+        <span class="nii_edit k-button"><span class="glyphicon glyphicon-pencil"></span></span>
+        <span class="nii_delete k-button"><span class="glyphicon glyphicon-remove"></span></span>
+        <div class="nii_info">
+            <p id="nii_name"></p>
+{#            <p id="nii_university"></p>#}
+        </div>
+        <div id="nii_projects"></div>
+        <div id="nii_employee"></div>
     </div>
 
     <div id="change_direction_window" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
@@ -109,13 +115,15 @@
                                 <label>Выберите Нии из списка<span class="required">*</span>:</label>
                             </div>
                             <div class="k-edit-field">
+                                <span class="nii_new k-button" style="float: right">
+                                    <span class="glyphicon glyphicon-plus"></span></span>
                                 <input data-role="combobox"
                                         data-auto-bind="false"
                                         data-value-primitive="true"
                                         data-text-field="name"
                                         data-value-field="id"
                                         data-bind="source: nii_list, value: selected_nii, events: {change: onChange}"
-                                        style="width: 100%"
+                                        style="width: 94%"
                                         required
                                         />
                             </div>
@@ -130,7 +138,6 @@
             </div>
         </div>
     </div>
-
 
     <div id="change_nii_window" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
          aria-hidden="true">
@@ -155,20 +162,88 @@
                                 <label>Подчиняется:</label>
                             </div>
                             <div class="k-edit-field">
-                                <select data-role="combobox" name="university" style="width: 100%"
+                                <input data-role="combobox" name="university" style="width: 100%"
                                         data-value-primitive="true"
                                         data-placeholder="Выберите из списка или введите новое значение"
                                         data-filter="contains"
                                         data-text-field="name" data-value-field="id"
-                                        data-bind="source: o.university_list, value: o.university" >
-                                </select>
+                                        data-bind="source: university_list, value: o.university" />
                             </div>
                         </div>
                     </div>
                     <div class="clear"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Закрыть</button>
-                        <button id="direction_save" type="button" class="btn btn-primary btn-sm">Сохранить</button>
+                        <button id="nii_save" type="button" class="btn btn-primary btn-sm">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="change_employee_window" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Редактирование сотрудника</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="change_employee" class="k-edit-form-container" style="width: inherit;">
+                            <div class="k-edit-label">
+                                <label>Фамилия<span class="required">*</span>:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input type="text" class="k-textbox" name="surname" required placeholder="Фамилия" style="width: 100%"
+                                       data-bind="value: o.surname"/>
+                            </div>
+                            <div class="k-edit-label">
+                                <label>Имя<span class="required">*</span>:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input type="text" class="k-textbox" name="name" required placeholder="Имя" style="width: 100%"
+                                       data-bind="value: o.name"/>
+                            </div>
+                            <div class="k-edit-label">
+                                <label>Отчество:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input type="text" class="k-textbox" name="patronymic" placeholder="Отчество" style="width: 100%"
+                                       data-bind="value: o.patronymic"/>
+                            </div>
+                            <div class="k-edit-label">
+                                <label>Должность:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input data-role="combobox" name="post" style="width: 100%"
+                                        data-value-primitive="true"
+                                        data-placeholder="Выберите из списка или введите новое значение"
+                                        data-filter="contains"
+                                        data-text-field="name" data-value-field="id"
+                                        data-bind="source: post_list, value: o.post" />
+                            </div>
+                            <div class="k-edit-label">
+                                <label>Телефон:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input type="text" class="k-textbox" name="tel" placeholder="Телефон" style="width: 100%"
+                                       data-bind="value: o.tel"/>
+                            </div>
+                            <div class="k-edit-label">
+                                <label>Эллектронный адресс:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input type="text" class="k-textbox" name="mail" placeholder="Эллектронный адресс" style="width: 100%"
+                                       data-bind="value: o.mail"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Закрыть</button>
+                        <button id="employee_save" type="button" class="btn btn-primary btn-sm">Сохранить</button>
                     </div>
                 </div>
             </div>
@@ -196,5 +271,9 @@
                 </span>
             </span>
         # } #
+    </script>
+
+    <script type="text/x-kendo-template" id="nii_employee_header_template">
+        <span class="k-button add_nii_employee" data-nii-id="0"><span class="k-icon k-i-plus"></span> Добавить сотрудника</span>
     </script>
 {% endblock %}

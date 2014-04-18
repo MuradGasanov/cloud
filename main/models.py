@@ -17,7 +17,7 @@ class Projects(models.Model):
 
 class Nii(models.Model):
     name = models.CharField(max_length=250, null=True)
-    university = models.ForeignKey(University)
+    university = models.ForeignKey(University, null=True)
     projects = models.ManyToManyField(Projects, null=True)
 
 

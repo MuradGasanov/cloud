@@ -293,44 +293,189 @@ class ProjectTree():
             models.Projects.objects.get(id=int(item.get("id"))).delete()
             return HttpResponse(json.dumps({}), content_type="application/json")
 
-    class Nii():
-        def __init__(self):
-            pass
 
-        @staticmethod
-        def read(request):
-            if "item" in request.POST:
-                item = json.loads(request.POST.get("item"))
-                exclude_list = models.Projects.objects.get(
-                    id=int(item.get("project_id"))
-                ).nii_set.all().values_list("id", flat=True)
-                nii = list(
-                    models.Nii.objects.exclude(id__in=exclude_list).values("id", "name")
-                )
-                return HttpResponse(json.dumps({"nii_list": nii}),
-                                    content_type="application/json")
-            else:
-                nii = list(
-                    models.Nii.objects.all().values("id", "name")
-                )
-                return HttpResponse(json.dumps(nii),
-                                    content_type="application/json")
+class Nii():
+    def __init__(self):
+        pass
 
-        @staticmethod
-        def add_direction(request):
+    @staticmethod
+    def read(request):
+        if "item" in request.POST:
             item = json.loads(request.POST.get("item"))
-            nii = models.Nii.objects.get(id=int(item.get("id")))
-            nii.projects.add(int(item.get("project_id")))
-            # nii.save()
-            return HttpResponse(json.dumps({"id": nii.id,
-                                            "name": nii.name}),
+            exclude_list = models.Projects.objects.get(
+                id=int(item.get("project_id"))
+            ).nii_set.all().values_list("id", flat=True)
+            nii = list(
+                models.Nii.objects.exclude(id__in=exclude_list).values("id", "name")
+            )
+            return HttpResponse(json.dumps({"nii_list": nii}),
+                                content_type="application/json")
+        else:
+            nii = models.Nii.objects.all()
+            nii_list = []
+            for n in nii:
+                nii_list.append({
+                    "id": n.id,
+                    "name": n.name,
+                    "university": n.university_id
+                })
+            return HttpResponse(json.dumps(nii_list),
                                 content_type="application/json")
 
-        @staticmethod
-        def destroy(request):
-            item = json.loads(request.POST.get("item"))
-            nii = models.Nii.objects.get(id=int(item.get("id")))
-            project = models.Projects.objects.get(id=int(item.get("project_id")))
-            nii.projects.remove(project)
-            return HttpResponse(json.dumps({}),
+    @staticmethod
+    def add_project(request):
+        item = json.loads(request.POST.get("item"))
+        nii = models.Nii.objects.get(id=int(item.get("id")))
+        nii.projects.add(int(item.get("project_id")))
+        # nii.save()
+        return HttpResponse(json.dumps({"id": nii.id,
+                                        "name": nii.name}),
+                            content_type="application/json")
+
+    @staticmethod
+    def remove_project(request):
+        item = json.loads(request.POST.get("item"))
+        nii = models.Nii.objects.get(id=int(item.get("id")))
+        project = models.Projects.objects.get(id=int(item.get("project_id")))
+        nii.projects.remove(project)
+        return HttpResponse(json.dumps({}),
+                            content_type="application/json")
+
+    @staticmethod
+    def create(request):
+        item = json.loads(request.POST.get("item"))
+
+        university = University.get_or_create(item.get("university"))
+
+        new_nii = models.Nii.objects.create(
+            name=item.get("name"),
+            university=university
+        )
+
+        return HttpResponse(json.dumps({"id": new_nii.id,
+                                        "name": new_nii.name,
+                                        "university": new_nii.university_id}),
+                            content_type="application/json")
+
+    @staticmethod
+    def update(request):
+        item = json.loads(request.POST.get("item"))
+
+        university = University.get_or_create(item.get("university"))
+
+        nii = models.Nii.objects.get(id=int(item.get("id")))
+
+        nii.name = item.get("name")
+        nii.university = university
+        nii.save()
+
+        return HttpResponse(json.dumps({"id": nii.id,
+                                        "name": nii.name,
+                                        "university": nii.university_id}),
+                            content_type="application/json")
+
+    @staticmethod
+    def get_project(request):
+        item = json.loads(request.POST.get("item"))
+        nii_id = item.get("id")
+        if nii_id:
+            projects = list(models.Nii.objects.get(id=nii_id).projects.all().values("id", "name", "description"))
+            return HttpResponse(json.dumps(projects),
                                 content_type="application/json")
+        return HttpResponseForbidden()
+
+
+class University():
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def read(request):
+        university = list(
+            models.University.objects.all().values("id", "name")
+        )
+        return HttpResponse(json.dumps(university),
+                            content_type="application/json")
+
+    @staticmethod
+    def get_or_create(id_or_name):
+        if type(id_or_name) == int:
+            university = models.University.objects.get(id=id_or_name)
+        elif type(id_or_name) == unicode and len(id_or_name) != 0:
+            university = models.University.objects.create(name=id_or_name)
+        else:
+            university = None
+        return university
+
+
+class Employee():
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def read(request):
+        item = json.loads(request.POST.get("item"))
+        nii_id = item.get("id")
+        if nii_id:
+            employees = list(models.Employees.objects.filter(nii_id=nii_id).values(
+                "id", "name", "surname", "patronymic",
+                "tel", "mail",
+                "post__id", "post__name",
+                "nii__id", "nii__name"
+            ))
+            return HttpResponse(json.dumps(employees),
+                                content_type="application/json")
+        return HttpResponseForbidden()
+
+    @staticmethod
+    def get_or_create_post(post):
+        if type(post) == int:
+            post = models.Posts.objects.get(id=post)
+        elif type(post) == unicode and len(post) != 0:
+            post = models.Posts.objects.create(name=post)
+        else:
+            post = None
+        return post
+
+    @staticmethod
+    def create(request):
+        item = json.loads(request.POST.get("item"))
+
+        nii = models.Nii.objects.get(id=item.get("nii_id"))
+        post = Employee.get_or_create_post(item.get("post"))
+
+        new_employee = models.Employees.objects.create(
+            name=item.get("name"),
+            surname=item.get("surname"),
+            patronymic=item.get("patronymic"),
+            mail="",
+            tel="",
+            post=post,
+            nii=nii
+        )
+
+        return HttpResponse(json.dumps({"id": new_employee.id,
+                                        "name": new_employee.name,
+                                        "surname": new_employee.surname,
+                                        "patronymic": new_employee.patronymic,
+                                        "tel": new_employee.tel,
+                                        "mail": new_employee.mail,
+                                        "post__id": new_employee.post.id if new_employee.post else None,
+                                        "post__name": new_employee.post.name if new_employee.post else None,
+                                        "nii_id": new_employee.nii.id,
+                                        "nii__name": new_employee.nii.name
+                                        }),
+                            content_type="application/json")
+
+
+class Post():
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def read(request):
+
+        post = models.Posts.objects.all().values("id", "name")
+
+        return HttpResponse(json.dumps(post),
+                            content_type="application/json")
