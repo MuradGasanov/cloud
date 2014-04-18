@@ -16,7 +16,7 @@
     </div>
 
     <div class="nii section" > <!-- style="display: none" -->
-        <span id="back" class="k-button"><span class="glyphicon glyphicon-arrow-up"> Показать проекты</span></span>
+        <span id="back" class="k-button"><span class="glyphicon glyphicon-arrow-up"></span>Показать проекты</span>
         <input id="nii"/>
         <span id="nii_add" class="k-button"><span class="glyphicon glyphicon-plus"></span></span>
         <span id="nii_edit" class="k-button"><span class="glyphicon glyphicon-pencil"></span></span>
@@ -125,6 +125,50 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Закрыть</button>
                         <button id="add_nii_save" type="button" class="btn btn-primary btn-sm">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="change_nii_window" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Редактирование НИИ</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="change_nii" class="k-edit-form-container" style="width: inherit;">
+                            <div class="k-edit-label">
+                                <label>Название<span class="required">*</span>:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <input type="text" class="k-textbox" name="name" required placeholder="Название проекта"
+                                       style="width: 100%"
+                                       data-bind="value: o.name"/>
+                            </div>
+                            <div class="k-edit-label">
+                                <label>Подчиняется:</label>
+                            </div>
+                            <div class="k-edit-field">
+                                <select data-role="combobox" name="university" style="width: 100%"
+                                        data-value-primitive="true"
+                                        data-placeholder="Выберите из списка или введите новое значение"
+                                        data-filter="contains"
+                                        data-text-field="name" data-value-field="id"
+                                        data-bind="source: o.university_list, value: o.university" >
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Закрыть</button>
+                        <button id="direction_save" type="button" class="btn btn-primary btn-sm">Сохранить</button>
                     </div>
                 </div>
             </div>

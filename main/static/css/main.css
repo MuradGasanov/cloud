@@ -34,8 +34,7 @@
 .tree-add-item {
     color: #A7A7A7;
 }
-.k-state-selected .tree-add-item,
-.k-state-focused .tree-add-item {
+.k-state-selected .tree-add-item{
     color: #eee;
 }
 .k-state-focused:active .tree-add-item {
