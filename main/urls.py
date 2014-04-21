@@ -28,6 +28,7 @@ urlpatterns = patterns('main.views',
     url(r'nii/read', Nii.read),
     url(r'nii/create', Nii.create),
     url(r'nii/update', Nii.update),
+    url(r'nii/destroy', Nii.destroy),
     url(r'nii/get_project', Nii.get_project),
 
     url(r'university/read', University.read),

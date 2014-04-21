@@ -222,9 +222,12 @@ var Nii = (function () {
                         nii_employee.dataSource.read({id: dataItem.id});
                         $(".add_nii_employee").data("nii-id", dataItem.id)
                             .removeClass("k-state-disabled");
-
+                        $(".nii_edit").removeClass("k-state-disabled");
+                        $(".nii_delete").removeClass("k-state-disabled");
                     } else {
                         $(".add_nii_employee").addClass("k-state-disabled");
+                        $(".nii_edit").addClass("k-state-disabled");
+                        $(".nii_delete").addClass("k-state-disabled");
                     }
                 }
             }).data("kendoComboBox");
@@ -374,6 +377,7 @@ var Nii = (function () {
             });
 
             $(".nii_edit").click(function () {
+                if ($(this).hasClass("k-state-disabled")) return false;
                 var val = nii.value(),
                     dataItem = nii.dataSource.get(val);
                 if (typeof dataItem == "undefined") return false;
@@ -385,6 +389,31 @@ var Nii = (function () {
                     university: dataItem.university
                 });
                 $change_nii_window.modal("show");
+                return false;
+            });
+
+            $(".nii_delete").click(function () {
+                if ($(this).hasClass("k-state-disabled")) return false;
+                var val = nii.value(),
+                    dataItem = nii.dataSource.get(val);
+                if (typeof dataItem == "undefined") return false;
+                if (!confirm("Вы уверены, что хотите удалить запись?")) return false;
+                noti({message: MESSAGE.wait}, "wait");
+                $.post(NII_BASE_URL + "destroy/", { item: JSON.stringify({ id: dataItem.id }) }, function(data) {
+                    noti();
+
+                    nii.dataSource.read();
+                    nii.value(null);
+                    $nii_name.text("");
+                    nii_projects.dataSource.data("");
+                    nii_employee.dataSource.data("");
+
+                    $(window).trigger("nii_delete_complete", data);
+
+                }, "json").fail(function (data) {
+                    noti({title: MESSAGE.error + data.status, message: data.statusText}, "error");
+                    $change_nii_window.modal("hide");
+                });
                 return false;
             });
 

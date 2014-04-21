@@ -376,6 +376,15 @@ class Nii():
                             content_type="application/json")
 
     @staticmethod
+    def destroy(request):
+        item = json.loads(request.POST.get("item"))
+
+        models.Nii.objects.get(id=int(item.get("id"))).delete()
+
+        return HttpResponse(json.dumps("ok"),
+                            content_type="application/json")
+
+    @staticmethod
     def get_project(request):
         item = json.loads(request.POST.get("item"))
         nii_id = item.get("id")

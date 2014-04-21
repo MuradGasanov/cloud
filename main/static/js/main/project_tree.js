@@ -347,6 +347,10 @@ var Project_tree = (function () {
                 nii_list_update(data);
             });
 
+            $(window).on("nii_delete_complete", function (e) {
+                project_tree.dataSource.read();
+            });
+
             $project_tree.on("click", ".delete_nii", function (e) {
                 if (!confirm("Вы уверены, что хотите удалить запись?")) return false;
                 var $this = $(this);
