@@ -317,7 +317,8 @@ class Nii():
                 nii_list.append({
                     "id": n.id,
                     "name": n.name,
-                    "university": n.university_id
+                    "university": n.university_id,
+                    "university_name": n.university.name if n.university else ""
                 })
             return HttpResponse(json.dumps(nii_list),
                                 content_type="application/json")

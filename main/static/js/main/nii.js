@@ -66,6 +66,11 @@ var Nii = (function () {
                         }
                     }
                 },
+                detailTemplate: kendo.template($("#nii_projects_detail_template").html()),
+                detailInit: function (e) {
+                    var detailRow = e.detailRow;
+                    detailRow.find("p").text(e.data.description);
+                },
                 height: 400,
                 sortable: true,
                 editable: {
@@ -208,7 +213,11 @@ var Nii = (function () {
                     var val = that.value();
                     var dataItem = that.dataSource.get(val);
                     if (dataItem) {
-                        $nii_name.text("Пректы " + (dataItem.name ? dataItem.name : ""));
+                        $nii_name.text(
+                            "Пректы " +
+                                (dataItem.name ? dataItem.name : "") +
+                                (dataItem.university_name !== "" ? " ("+dataItem.university_name+")": "")
+                        );
                         nii_projects.dataSource.read({id: dataItem.id});
                         nii_employee.dataSource.read({id: dataItem.id});
                         $(".add_nii_employee").data("nii-id", dataItem.id)
