@@ -84,18 +84,55 @@ var Nii = (function () {
                 dataSource: {
                     type: "json",
                     transport: {
-                        read: {},
-                        destroy: {},
-                        parameterMap: function (options, operation) {
-                            if (operation !== "read" && options) {
-                                return {item: kendo.stringify(options)};
-                            }
+                        read: function (options) {
+                            var data = options.data;
+                            data = typeof data == "undefined" ? {} : data;
+                            $.ajax({
+                                type: "POST",
+                                url: "employee/read",
+                                data: { item: JSON.stringify(data) },
+                                dataType: "json",
+                                success: function (result) {
+                                    options.success(result);
+                                },
+                                error: function (result) {
+                                    noti({title: MESSAGE.error + result.status, message: result.statusText}, "error");
+                                    options.error(result);
+                                }
+                            });
+                        },
+                        destroy: function (options) {
+                            var data = options.data;
+                            data = typeof data == "undefined" ? {} : data;
+                            $.ajax({
+                                type: "POST",
+                                url: "employee/destroy",
+                                data: { item: JSON.stringify(data) },
+                                dataType: "json",
+                                success: function (result) {
+                                    options.success(result);
+                                },
+                                error: function (result) {
+                                    noti({title: MESSAGE.error + result.status, message: result.statusText}, "error");
+                                    options.error(result);
+                                }
+                            });
                         }
                     },
                     schema: {
                         model: {
-                            id: "subdivision_id",
-                            fields: { name: {type: "string"}, tel: {type: "string"} }
+                            id: "id",
+                            fields: {
+                                name: { type: "string" },
+                                surname: { type: "string"  },
+                                patronymic: { type: "string" },
+                                tel: { type: "string" },
+                                mail: { type: "string" },
+                                post__id: { type: "string" },
+                                post__name: { type: "string" },
+                                nii__id: { type: "string" },
+                                nii__name: { type: "string" }
+                            }
                         }
                     }
                 },
@@ -111,15 +148,35 @@ var Nii = (function () {
                     cancelDelete: "Нет"
                 },
                 columns: [
-                    { field: "name", title: "Название" },
-                    { field: "tel", title: "Телефон", width: "300px", attributes: {title: "#=tel#"} },
                     { command: [
-                        {   text: "Редактировать",
+                        {  name: "custom-edit",
                             click: function (e) {
-                            }
-                        },
-                        { name: "destroy", text: "Удалить" }
-                    ], width: "250px", attributes: { style: "text-align: center;"} }
+                                var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                                $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
+                                employee_model.set("is_edit", "true");
+                                employee_model.set("o", {
+                                    id: dataItem.id,
+                                    name: dataItem.name,
+                                    surname: dataItem.surname,
+                                    patronymic: dataItem.patronymic,
+                                    tel: dataItem.tel,
+                                    mail: dataItem.mail,
+                                    post: dataItem.post__id,
+                                    nii_id: dataItem.nii__id
+                                });
+                                $change_employee_window.modal("show");
+                                return false;
+                            },
+                            template: "<a class='k-button k-grid-custom-edit'><span class='k-icon k-edit '></span></a>"
+                        }
+                    ], title: " ", width: 46 },
+                    { field: "surname", title: "ФИО", template: "#= [surname, name, patronymic].join(' ') #" },
+                    { field: "post__name", title: "Должность", width: "450px", attributes: {title: "#=post__name#"} },
+                    { command: [
+                        { name: "destroy",
+                            template: "<a class='k-button k-grid-delete'><span class='k-icon k-delete'></span></a>"
+                        }
+                    ], title: " ", width: 46 }
                 ]
             }).data("kendoGrid");
 
@@ -153,10 +210,13 @@ var Nii = (function () {
                     if (dataItem) {
                         $nii_name.text("Пректы " + (dataItem.name ? dataItem.name : ""));
                         nii_projects.dataSource.read({id: dataItem.id});
-                        $(".add_nii_employee").data("nii-id", dataItem.id);
+                        nii_employee.dataSource.read({id: dataItem.id});
+                        $(".add_nii_employee").data("nii-id", dataItem.id)
+                            .removeClass("k-state-disabled");
 
+                    } else {
+                        $(".add_nii_employee").addClass("k-state-disabled");
                     }
-                    console.log(dataItem);
                 }
             }).data("kendoComboBox");
 
@@ -195,6 +255,71 @@ var Nii = (function () {
             kendo.bind($change_employee, employee_model);
             var employee_validator = $change_employee.kendoValidator(validator_option).data("kendoValidator");
             var $change_employee_window = $("#change_employee_window");
+
+            $(".add_nii_employee").click(function() {
+                if ($(this).hasClass("k-state-disabled")) { return false; }
+                $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
+                var nii_id = $(this).data("nii-id");
+                employee_model.set("is_edit", false);
+                employee_model.set("o", {
+                    id: 0,
+                    name: "",
+                    surname: "",
+                    patronymic: "",
+                    tel: "",
+                    mail: "",
+                    post: null,
+                    nii_id: nii_id
+                });
+                $change_employee_window.modal("show");
+                return false;
+            });
+
+            function employee_response_handler(d) {
+                var data = nii_employee.dataSource;
+                var item = data.get(d.id);
+                if (item) {
+                    item.name = d.name;
+                    item.surname = d.surname;
+                    item.patronymic = d.patronymic;
+                    item.tel = d.tel;
+                    item.mail = d.mail;
+                    item.post__id = d.post__id;
+                    item.post__name = d.post__name;
+                    item.nii__id = d.nii__id;
+                    item.nii__name = d.nii__name;
+                } else {
+                    item = {
+                        id : d.id,
+                        name: d.name,
+                        surname: d.surname,
+                        patronymic: d.patronymic,
+                        tel: d.tel,
+                        mail: d.mail,
+                        post__id: d.post__id,
+                        post__name: d.post__name,
+                        nii__id: d.nii__id,
+                        nii__name: d.nii__name
+                    };
+                    data.add(item);
+                }
+                nii_employee.refresh();
+                employee_model.get("post_list").read();
+                noti();
+                $change_employee_window.modal("hide");
+            }
+
+            $("#employee_save").click(function () {
+                if (!employee_validator.validate()) return false;
+                var send = employee_model.get("o");
+                noti({message: MESSAGE.wait}, "wait");
+                $.post("employee/" + (employee_model.get("is_edit") ? "update/" : "create/"),
+                    { item: JSON.stringify(send) }, employee_response_handler, "json").fail(function (data) {
+                        noti({title: MESSAGE.error + data.status, message: data.statusText}, "error");
+                        $change_employee_window.modal("hide");
+                    });
+                return false;
+            });
 
             var nii_model = kendo.observable({
                 is_edit: false,
@@ -236,6 +361,7 @@ var Nii = (function () {
                     university: null
                 });
                 $change_nii_window.modal("show");
+                return false;
             });
 
             $(".nii_edit").click(function () {
@@ -250,10 +376,11 @@ var Nii = (function () {
                     university: dataItem.university
                 });
                 $change_nii_window.modal("show");
+                return false;
             });
 
             function nii_response_handler(data) {
-                noti({message: MESSAGE.done}, "done", DONE_TIME_OUT);
+                noti();
                 nii.dataSource.read();
                 nii_model.get("university_list").read();
                 $change_nii_window.modal("hide");
@@ -264,6 +391,7 @@ var Nii = (function () {
                 if (typeof nii.dataSource.get(val) == "undefined") {
                     nii.value(data.id);
                 }
+                return false;
             }
 
             $("#nii_save").click(function () {

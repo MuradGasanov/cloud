@@ -428,28 +428,18 @@ class Employee():
         return HttpResponseForbidden()
 
     @staticmethod
-    def get_or_create_post(post):
-        if type(post) == int:
-            post = models.Posts.objects.get(id=post)
-        elif type(post) == unicode and len(post) != 0:
-            post = models.Posts.objects.create(name=post)
-        else:
-            post = None
-        return post
-
-    @staticmethod
     def create(request):
         item = json.loads(request.POST.get("item"))
 
         nii = models.Nii.objects.get(id=item.get("nii_id"))
-        post = Employee.get_or_create_post(item.get("post"))
+        post = Post.get_or_create(item.get("post"))
 
         new_employee = models.Employees.objects.create(
             name=item.get("name"),
             surname=item.get("surname"),
             patronymic=item.get("patronymic"),
-            mail="",
-            tel="",
+            mail=item.get("mail"),
+            tel=item.get("tel"),
             post=post,
             nii=nii
         )
@@ -462,9 +452,48 @@ class Employee():
                                         "mail": new_employee.mail,
                                         "post__id": new_employee.post.id if new_employee.post else None,
                                         "post__name": new_employee.post.name if new_employee.post else None,
-                                        "nii_id": new_employee.nii.id,
+                                        "nii__id": new_employee.nii.id,
                                         "nii__name": new_employee.nii.name
                                         }),
+                            content_type="application/json")
+
+    @staticmethod
+    def update(request):
+        item = json.loads(request.POST.get("item"))
+
+        nii = models.Nii.objects.get(id=item.get("nii_id"))
+        post = Post.get_or_create(item.get("post"))
+
+        employee = models.Employees.objects.get(id=int(item.get("id", 0)))
+        employee.name = item.get("name")
+        employee.surname = item.get("surname")
+        employee.patronymic = item.get("patronymic")
+        employee.mail = item.get("mail")
+        employee.tel = item.get("tel")
+        employee.post = post
+        employee.nii = nii
+        employee.save()
+
+        return HttpResponse(json.dumps({"id": employee.id,
+                                        "name": employee.name,
+                                        "surname": employee.surname,
+                                        "patronymic": employee.patronymic,
+                                        "tel": employee.tel,
+                                        "mail": employee.mail,
+                                        "post__id": employee.post.id if employee.post else None,
+                                        "post__name": employee.post.name if employee.post else None,
+                                        "nii__id": employee.nii.id,
+                                        "nii__name": employee.nii.name
+                                        }),
+                            content_type="application/json")
+
+    @staticmethod
+    def destroy(request):
+        item = json.loads(request.POST.get("item"))
+
+        models.Employees.objects.get(id=item.get("id")).delete()
+
+        return HttpResponse(json.dumps("ok"),
                             content_type="application/json")
 
 
@@ -475,7 +504,17 @@ class Post():
     @staticmethod
     def read(request):
 
-        post = models.Posts.objects.all().values("id", "name")
+        post = list(models.Posts.objects.all().values("id", "name"))
 
         return HttpResponse(json.dumps(post),
                             content_type="application/json")
+
+    @staticmethod
+    def get_or_create(post):
+        if type(post) == int:
+            post = models.Posts.objects.get(id=post)
+        elif type(post) == unicode and len(post) != 0:
+            post = models.Posts.objects.create(name=post)
+        else:
+            post = None
+        return post

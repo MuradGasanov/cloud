@@ -123,7 +123,7 @@ var Project_tree = (function () {
                 if (direction_model.get("is_edit")) {
                     $.post(PROJECT_TREE_BASE_URL + "direction/update/",
                         {item: JSON.stringify(send) },function (data) {
-                            noti({message: MESSAGE.done}, "done", DONE_TIME_OUT);
+                            noti();
                             project_tree.text(node, data.name);
                             $change_direction_window.modal("hide");
                         }, "json").fail(function (data) {
@@ -133,7 +133,7 @@ var Project_tree = (function () {
                 } else {
                     $.post(PROJECT_TREE_BASE_URL + "direction/create/",
                         {item: JSON.stringify(send) },function (data) {
-                            noti({message: MESSAGE.done}, "done", DONE_TIME_OUT);
+                            noti();
                             project_tree.append(
                                 {
                                     "id": data.id,
@@ -242,7 +242,7 @@ var Project_tree = (function () {
                 if (project_model.get("is_edit")) {
                     $.post(PROJECT_TREE_BASE_URL + "project/update/",
                         {item: JSON.stringify(send) },function (data) {
-                            noti({message: MESSAGE.done}, "done", DONE_TIME_OUT);
+                            noti();
                             project_tree.text(node, data.name);
                             $change_project_window.modal("hide");
                         }, "json").fail(function (data) {
@@ -252,7 +252,7 @@ var Project_tree = (function () {
                 } else {
                     $.post(PROJECT_TREE_BASE_URL + "project/create/",
                         {item: JSON.stringify(send) },function (data) {
-                            noti({message: MESSAGE.done}, "done", DONE_TIME_OUT);
+                            noti();
                             project_tree.append(
                                 {
                                     "id": data.id,
@@ -380,7 +380,7 @@ var Project_tree = (function () {
                 if (!add_nii_model.get("is_edit")) {
                     $.post("nii/add_project/",
                         {item: JSON.stringify(send) },function (data) {
-                            noti({message: MESSAGE.done}, "done", DONE_TIME_OUT);
+                            noti();
                             project_tree.append(
                                 {
                                     "id": data.id,

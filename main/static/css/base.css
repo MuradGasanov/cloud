@@ -6,13 +6,9 @@ body {
     font: normal 12px/14px Arial, Helvetica, Sans-serif;
 }
 
-.clear {
-    clear: both;
-}
+.clear { clear: both; }
 
-.required {
-    color: #f00;
-}
+.required { color: #f00; }
 
 .k-notification-error.k-group {
     background: rgba(255,0,0,.7);
@@ -84,18 +80,14 @@ body {
     margin-right: 10px;
 }
 
-#logo{float:left;}
+#logo{ float:left; }
+
 .navbar-collapse .navbar-nav.navbar-left:first-child { margin-left: 0; }
 
+.k-edit-label, .k-edit-form-container .editor-label { width: 20%; }
+.k-edit-field, .k-edit-form-container .editor-field { width: 73%; }
 
-.k-edit-label, .k-edit-form-container .editor-label {
-    width: 20%;
-}
+.k-widget.k-tooltip-validation { margin-top: 5px; }
 
-.k-edit-field, .k-edit-form-container .editor-field {
-    width: 73%;
-}
-
-.k-widget.k-tooltip-validation {
-    margin-top: 5px;
-}
+.modal-header { padding: 10px }
+.modal-footer { padding: 9px 20px 10px; }

@@ -33,6 +33,9 @@ urlpatterns = patterns('main.views',
     url(r'university/read', University.read),
 
     url(r'employee/read', Employee.read),
+    url(r'employee/create', Employee.create),
+    url(r'employee/update', Employee.update),
+    url(r'employee/destroy', Employee.destroy),
 
     url(r'post/read', Post.read)
 

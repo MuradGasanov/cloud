@@ -77,3 +77,8 @@ html {
 #nii_projects, #nii_employee {
     margin-top: 10px;
 }
+
+.k-grid tbody .k-button {
+    min-width: 12px;
+    width: 32px;
+}
