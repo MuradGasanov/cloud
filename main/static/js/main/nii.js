@@ -176,7 +176,7 @@ var Nii = (function () {
                         }
                     ], title: " ", width: 46 },
                     { field: "surname", title: "ФИО", template: "#= [surname, name, patronymic].join(' ') #" },
-                    { field: "post__name", title: "Должность", width: "450px", attributes: {title: "#=post__name#"} },
+                    { field: "post__name", title: "Должность", attributes: {title: "#=post__name#"} },
                     { command: [
                         { name: "destroy",
                             template: "<a class='k-button k-grid-delete'><span class='k-icon k-delete'></span></a>"
