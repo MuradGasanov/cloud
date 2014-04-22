@@ -53,7 +53,6 @@ var Project_tree = (function () {
                     }
                 });
 
-
             var node = null;
 
             var $project_tree = $("#project_tree");
@@ -296,19 +295,8 @@ var Project_tree = (function () {
             var add_nii_validator = $add_nii.kendoValidator(validator_option).data("kendoValidator");
             var $add_nii_window = $("#add_nii_window");
 
-            function nii_list_update(data) {
+            function nii_list_update() {
                 if (node) {
-                    data = typeof data == "undefined" ? null : data;
-                    if (data) {
-                        $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
-                        var dataSource = add_nii_model.get("nii_list");
-                        dataSource.push(data);
-                        add_nii_model.set("nii_list", dataSource);
-                        add_nii_model.set("is_edit", false);
-                        add_nii_model.set("selected_nii", data.id);
-                        $("#add_nii_save").click();
-                        return false;
-                    }
                     var uid = project_tree.parent(node).data("uid"),
                         dataItem = project_tree.dataSource.getByUid(uid);
                     var send = {
@@ -344,10 +332,29 @@ var Project_tree = (function () {
             });
 
             $(window).on("nii_update_complete", function (e, data) {
-                nii_list_update(data);
+                //var rename_node = project_tree.findByText(data.old_name);
+                //project_tree.text(rename_node, data.new_name);
+                project_tree.dataSource.read();
             });
 
-            $(window).on("nii_delete_complete", function (e) {
+            $(window).on("nii_create_complete", function (e, data) {
+                if ($add_nii_window.data("bs.modal").isShown) {
+                    data = typeof data == "undefined" ? null : data;
+                    if (data) {
+                        $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
+                        var dataSource = add_nii_model.get("nii_list");
+                        dataSource.push(data);
+                        add_nii_model.set("nii_list", dataSource);
+                        add_nii_model.set("is_edit", false);
+                        add_nii_model.set("selected_nii", data.id);
+                        $("#add_nii_save").click();
+                    }
+                }
+            });
+
+            $(window).on("nii_delete_complete", function (e, data) {
+                //var delete_node = project_tree.findByText(data.name);
+                //project_tree.remove(delete_node);
                 project_tree.dataSource.read();
             });
 

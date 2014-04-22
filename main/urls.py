@@ -39,5 +39,4 @@ urlpatterns = patterns('main.views',
     url(r'employee/destroy', Employee.destroy),
 
     url(r'post/read', Post.read)
-
 )

@@ -28,13 +28,9 @@ var Nii = (function () {
                 done: "Выполнено"
             };
 
-            var DONE_TIME_OUT = 1500;
+            var NII_BASE_URL = "nii/";
 
-            var PROJECT_TREE_BASE_URL = "project_tree/",
-                NII_BASE_URL = "nii/";
-
-            var $nii_name = $("#nii_name"),
-                $nii_university = $("#nii_university");
+            var $nii_name = $("#nii_name");
 
             var nii_projects = $("#nii_projects").kendoGrid({
                 autoBind: false,
@@ -408,7 +404,7 @@ var Nii = (function () {
                     nii_projects.dataSource.data("");
                     nii_employee.dataSource.data("");
 
-                    $(window).trigger("nii_delete_complete", data);
+                    $(window).trigger("nii_delete_complete", dataItem);
 
                 }, "json").fail(function (data) {
                     noti({title: MESSAGE.error + data.status, message: data.statusText}, "error");
@@ -418,29 +414,40 @@ var Nii = (function () {
             });
 
             function nii_response_handler(data) {
-                noti();
                 nii.dataSource.read();
                 nii_model.get("university_list").read();
-                $change_nii_window.modal("hide");
-
-                $(window).trigger("nii_update_complete", data);
-
                 var val = nii.value();
                 if (typeof nii.dataSource.get(val) == "undefined") {
                     nii.value(data.id);
                 }
-                return false;
+                noti();
+                $change_nii_window.modal("hide");
             }
 
             $("#nii_save").click(function () {
                 if (!nii_validator.validate()) return false;
                 var send = nii_model.get("o");
                 noti({message: MESSAGE.wait}, "wait");
-                $.post(NII_BASE_URL + (nii_model.get("is_edit") ? "update/" : "create/"),
-                    {item: JSON.stringify(send) }, nii_response_handler, "json").fail(function (data) {
+                if (nii_model.get("is_edit")) {
+                    $.post(NII_BASE_URL + "update/" ,
+                    {item: JSON.stringify(send) }, function (data) {
+                            nii_response_handler(data);
+                            $(window).trigger("nii_update_complete", { old_name: data.old_name, new_name: data.name });
+                        }, "json").fail(function (data) {
                         noti({title: MESSAGE.error + data.status, message: data.statusText}, "error");
                         $change_nii_window.modal("hide");
                     });
+                } else {
+                    $.post(NII_BASE_URL + "create/",
+                    {item: JSON.stringify(send) }, function (data) {
+                            nii_response_handler(data);
+                            $(window).trigger("nii_create_complete", data);
+                        }, "json").fail(function (data) {
+                        noti({title: MESSAGE.error + data.status, message: data.statusText}, "error");
+                        $change_nii_window.modal("hide");
+                    });
+                }
+
                 return false;
             });
 
