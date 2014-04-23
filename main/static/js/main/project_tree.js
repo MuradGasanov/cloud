@@ -24,8 +24,6 @@ var Project_tree = (function () {
                 done: "Выполнено"
             };
 
-            var DONE_TIME_OUT = 1500;
-
             var PROJECT_TREE_BASE_URL = "project_tree/",
                 dataSource = new kendo.data.HierarchicalDataSource({
                     transport: {
@@ -104,7 +102,7 @@ var Project_tree = (function () {
                 noti({message: MESSAGE.wait}, "wait");
                 $.post(PROJECT_TREE_BASE_URL + "direction/destroy/",
                     { item: JSON.stringify(send) },function (data) {
-                        noti({message: MESSAGE.done}, "done", DONE_TIME_OUT);
+                        noti();
                         project_tree.remove(node);
                     }, "json").fail(function (data) {
                         noti({title: MESSAGE.error + data.status, message: data.statusText}, "error");
@@ -221,7 +219,7 @@ var Project_tree = (function () {
                 noti({message: MESSAGE.wait}, "wait");
                 $.post(PROJECT_TREE_BASE_URL + "project/destroy/",
                     { item: JSON.stringify(send) },function (data) {
-                        noti({message: MESSAGE.done}, "done", DONE_TIME_OUT);
+                        noti();
                         project_tree.remove(node);
                     }, "json").fail(function (data) {
                         noti({title: MESSAGE.error + data.status, message: data.statusText}, "error");
@@ -373,7 +371,7 @@ var Project_tree = (function () {
                 noti({message: MESSAGE.wait}, "wait");
                 $.post("nii/remove_project/",
                     { item: JSON.stringify(send) },function (data) {
-                        noti({message: MESSAGE.done}, "done", DONE_TIME_OUT);
+                        noti();
                         project_tree.remove(node);
                     }, "json").fail(function (data) {
                         noti({title: MESSAGE.error + data.status, message: data.statusText}, "error");
