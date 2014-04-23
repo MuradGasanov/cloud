@@ -81,6 +81,11 @@ body {
 }
 
 #logo{ float:left; }
+#logo img {
+    height: 50px;
+    width: 50px;
+    margin-right: 8px;
+}
 
 .navbar-collapse .navbar-nav.navbar-left:first-child { margin-left: 0; }
 
