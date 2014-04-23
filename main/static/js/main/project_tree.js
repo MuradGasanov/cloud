@@ -58,7 +58,12 @@ var Project_tree = (function () {
                 dataSource: treeDataSource,
                 loadOnDemand: false,
                 dataTextField: "name",
-                template: kendo.template($("#project_tree_template").html())
+                template: kendo.template($("#project_tree_template").html()),
+                messages: {
+                    retry: "Повторить",
+                    requestFailed: "не удалось загрузить список.",
+                    loading: "Идет загрузка..."
+                }
             }).data("kendoTreeView");
 
             var direction_model = kendo.observable({
@@ -361,7 +366,6 @@ var Project_tree = (function () {
                 if ($add_nii_window.data("bs.modal").isShown) {
                     data = typeof data == "undefined" ? null : data;
                     if (data) {
-                        $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
                         var dataSource = add_nii_model.get("nii_list");
                         dataSource.push(data);
                         add_nii_model.set("nii_list", dataSource);
@@ -406,9 +410,10 @@ var Project_tree = (function () {
 
             $("#add_nii_save").click(function () {
                 if (!add_nii_validator.validate()) return false;
+                var uid = project_tree.parent(node).data("uid");
                 var send = {
                     id: add_nii_model.get("selected_nii"),
-                    project_id: project_tree.dataSource.getByUid((node).data("uid")).id
+                    project_id: treeDataSource.getByUid(uid).id
                 };
                 noti({message: MESSAGE.wait}, "wait");
                 if (!add_nii_model.get("is_edit")) {
