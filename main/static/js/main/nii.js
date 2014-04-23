@@ -432,7 +432,7 @@ var Nii = (function () {
                     $.post(NII_BASE_URL + "update/" ,
                     {item: JSON.stringify(send) }, function (data) {
                             nii_response_handler(data);
-                            $(window).trigger("nii_update_complete", { old_name: data.old_name, new_name: data.name });
+                            $(window).trigger("nii_update_complete", data);
                         }, "json").fail(function (data) {
                         noti({title: MESSAGE.error + data.status, message: data.statusText}, "error");
                         $change_nii_window.modal("hide");
@@ -452,6 +452,7 @@ var Nii = (function () {
             });
 
             $(window).on("show_nii", function (e, id) {
+                nii.value(null);
                 nii.value(id);
             });
 

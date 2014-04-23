@@ -25,7 +25,7 @@ var Project_tree = (function () {
             };
 
             var PROJECT_TREE_BASE_URL = "project_tree/",
-                dataSource = new kendo.data.HierarchicalDataSource({
+                treeDataSource = new kendo.data.HierarchicalDataSource({
                     transport: {
                         read: function (options) {
                             $.ajax({
@@ -55,9 +55,15 @@ var Project_tree = (function () {
 
             var $project_tree = $("#project_tree");
             var project_tree = $project_tree.kendoTreeView({
-                dataSource: dataSource,
+                dataSource: treeDataSource,
+                loadOnDemand: false,
                 dataTextField: "name",
-                template: kendo.template($("#project_tree_template").html())
+                template: kendo.template($("#project_tree_template").html()),
+                messages: {
+                    retry: "Повторить",
+                    requestFailed: "не удалось загрузить список.",
+                    loading: "Идет загрузка..."
+                }
             }).data("kendoTreeView");
 
             var direction_model = kendo.observable({
@@ -329,17 +335,37 @@ var Project_tree = (function () {
                 nii_list_update();
             });
 
+            function find_nii_nodes(id) {
+                var result = [];
+                var tree_data = treeDataSource.data();
+                for (var d = 0; d < tree_data.length; d++) {
+                    var projects = tree_data[d].items;
+                    for (var p = 0; p < projects.length; p++) {
+                        var niies = projects[p].items;
+                        for (var n = 0; n < niies.length; n++) {
+                            var nii = niies[n];
+                            if (nii.id === id) {
+                                result.push(nii);
+                            }
+                        }
+                    }
+                }
+                return result;
+            }
+
             $(window).on("nii_update_complete", function (e, data) {
-                //var rename_node = project_tree.findByText(data.old_name);
-                //project_tree.text(rename_node, data.new_name);
-                project_tree.dataSource.read();
+                var nodes = find_nii_nodes(data.id);
+                for (var i = 0; i < nodes.length; i++) {
+                    var uid = nodes[i].uid,
+                        rename_node = project_tree.findByUid(uid);
+                    project_tree.text(rename_node, data.name);
+                }
             });
 
             $(window).on("nii_create_complete", function (e, data) {
                 if ($add_nii_window.data("bs.modal").isShown) {
                     data = typeof data == "undefined" ? null : data;
                     if (data) {
-                        $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
                         var dataSource = add_nii_model.get("nii_list");
                         dataSource.push(data);
                         add_nii_model.set("nii_list", dataSource);
@@ -351,9 +377,12 @@ var Project_tree = (function () {
             });
 
             $(window).on("nii_delete_complete", function (e, data) {
-                //var delete_node = project_tree.findByText(data.name);
-                //project_tree.remove(delete_node);
-                project_tree.dataSource.read();
+                var nodes = find_nii_nodes(data.id);
+                for (var i = 0; i < nodes.length; i++) {
+                    var uid = nodes[i].uid,
+                      remove_node = project_tree.findByUid(uid);
+                    project_tree.remove(remove_node);
+                }
             });
 
             $project_tree.on("click", ".delete_nii", function (e) {
@@ -381,9 +410,10 @@ var Project_tree = (function () {
 
             $("#add_nii_save").click(function () {
                 if (!add_nii_validator.validate()) return false;
+                var uid = project_tree.parent(node).data("uid");
                 var send = {
                     id: add_nii_model.get("selected_nii"),
-                    project_id: project_tree.dataSource.getByUid((node).data("uid")).id
+                    project_id: treeDataSource.getByUid(uid).id
                 };
                 noti({message: MESSAGE.wait}, "wait");
                 if (!add_nii_model.get("is_edit")) {

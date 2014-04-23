@@ -171,7 +171,7 @@ class ProjectTree():
                 "has_items": True,
                 "items": [
                     {
-                        "id": d.id,
+                        "id": 0,
                         "name": "Добавить проект",
                         "type": "add_project",
                         "has_items": False,
@@ -188,7 +188,7 @@ class ProjectTree():
                     "has_items": True,
                     "items":  [
                         {
-                            "id": p.id,
+                            "id": 0,
                             "name": "Добавить НИИ",
                             "type": "add_nii",
                             "has_items": False,
