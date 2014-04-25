@@ -10,5 +10,6 @@ urlpatterns = patterns('',
     url(r'^$', lambda x: HttpResponseRedirect('/main/')),
     url(r'login/', main.views.log_in),
     url(r'logout/', main.views.log_out),
+    url(r'change_password/', main.views.change_password),
     url(r'^main/', include('main.urls'))
 )

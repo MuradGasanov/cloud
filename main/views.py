@@ -53,6 +53,34 @@ def log_out(request):
     logout(request)
     return HttpResponseRedirect("/")
 
+
+def change_password(request):
+    item = json.loads(request.POST.get("item"))
+
+    current_password = item.get("current_password")
+
+    if request.user.check_password(current_password):
+        new_password = item.get("new_password")
+        request.user.set_password(new_password)
+        request.user.save()
+        username = request.user.username
+        user = authenticate(username=username, password=new_password)
+        if user is not None:
+            logout(request)
+            login(request, user)
+            return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json")
+        else:
+            request.user.set_password(current_password)
+            request.user.save()
+            return HttpResponse(json.dumps({
+                "status": "Не удалось сменить пароль",
+                "statusText": "Ваш новый пароль не может быть установлен"}), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({
+            "status": "Текуший пароль введен не правильно",
+            "statusText": "Попробуйте ввести текущий пароль еще раз"}), content_type="application/json")
+
+
 #---------------------------------------------------------------------------------
 # Users
 #---------------------------------------------------------------------------------
