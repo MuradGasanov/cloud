@@ -39,8 +39,7 @@ SECRET_KEY = ')w@!)v4*2=wl!b3d-w&$t(x!$5=^z(_ze7@ha4s&c6l^@hl8uy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'project.apertura.su']
 
 # Application definition
 
