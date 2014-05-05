@@ -43,11 +43,11 @@ def log_in(request):
         login(request, user)
         request.session.set_expiry(timedelta(days=1).seconds)
         if user.is_active:
-            return HttpResponse(json.dumps({"error": []}), content_type="application/json")
+            return HttpResponse('{"error": []}', content_type="application/json")
         else:
-            return HttpResponse(json.dumps({"error": ["Пользователь заблокирован"]}), content_type="application/json")
+            return HttpResponse('{"error": ["Пользователь заблокирован"]}', content_type="application/json")
     else:
-        return HttpResponse(json.dumps({"error": ["Неверный логин и пароль"]}), content_type="application/json")
+        return HttpResponse('{"error": ["Неверный логин и пароль"]}', content_type="application/json")
 
 
 def login_error(request):
@@ -154,7 +154,7 @@ class Users():
             user.save()
         else:
             return HttpResponseForbidden()
-        return HttpResponse(json.dumps({}), content_type="application/json")
+        return HttpResponse('{}', content_type="application/json")
 
     @staticmethod
     @login_required(redirect_field_name=None)
@@ -287,7 +287,7 @@ class ProjectTree():
             """
             item = json.loads(r.POST.get("item"))
             models.Directions.objects.get(id=int(item.get("id"))).delete()
-            return HttpResponse(json.dumps({}), content_type="application/json")
+            return HttpResponse('{}', content_type="application/json")
 
     class Project():
         def __init__(self):
@@ -341,7 +341,7 @@ class ProjectTree():
             """
             item = json.loads(request.POST.get("item"))
             models.Projects.objects.get(id=int(item.get("id"))).delete()
-            return HttpResponse(json.dumps({}), content_type="application/json")
+            return HttpResponse('{}', content_type="application/json")
 
 
 class Nii():
@@ -392,7 +392,7 @@ class Nii():
         nii = models.Nii.objects.get(id=int(item.get("id")))
         project = models.Projects.objects.get(id=int(item.get("project_id")))
         nii.projects.remove(project)
-        return HttpResponse(json.dumps({}),
+        return HttpResponse('{}',
                             content_type="application/json")
 
     @staticmethod
@@ -437,7 +437,7 @@ class Nii():
 
         models.Nii.objects.get(id=int(item.get("id"))).delete()
 
-        return HttpResponse(json.dumps("ok"),
+        return HttpResponse("ok",
                             content_type="application/json")
 
     @staticmethod
@@ -449,7 +449,8 @@ class Nii():
             projects = list(models.Nii.objects.get(id=nii_id).projects.all().values("id", "name", "description"))
             return HttpResponse(json.dumps(projects),
                                 content_type="application/json")
-        return HttpResponseForbidden()
+        return HttpResponse("[]",
+                            content_type="application/json")
 
 
 class University():
@@ -494,7 +495,8 @@ class Employee():
             ))
             return HttpResponse(json.dumps(employees),
                                 content_type="application/json")
-        return HttpResponseForbidden()
+        return HttpResponse('[]',
+                            content_type="application/json")
 
     @staticmethod
     @login_required(redirect_field_name=None)
@@ -565,7 +567,7 @@ class Employee():
 
         models.Employees.objects.get(id=item.get("id")).delete()
 
-        return HttpResponse(json.dumps("ok"),
+        return HttpResponse("ok",
                             content_type="application/json")
 
 
