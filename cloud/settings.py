@@ -50,10 +50,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     # 'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'gunicorn',
-
     'main',
+    'social_auth'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -63,8 +62,26 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     #'django.contrib.messages.middleware.MessageMiddleware',
     #'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'main.midleware.MiddleWareProcess'
+    #'main.midleware.MiddleWareProcess',
+    'social_auth.middleware.SocialAuthExceptionMiddleware'
 )
+
+AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.google.GoogleOAuth2Backend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+GOOGLE_OAUTH2_CLIENT_ID = '539665947486-mbf8mvmjbg8sjb5k8pfi5s5qc3rkc4c4.apps.googleusercontent.com'
+GOOGLE_OAUTH2_CLIENT_SECRET = 'hiT223SmTz5bohBLIHli5naL'
+
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+LOGIN_REDIRECT_URL = '/'
+LOGIN_ERROR_URL = '/login_error/'
+
+LOGIN_URL = "/login/"
+
+GOOGLE_WHITE_LISTED_DOMAINS = ['apertura.su']
 
 ROOT_URLCONF = 'cloud.urls'
 

@@ -8,6 +8,8 @@ import main.views
 urlpatterns = patterns('',
     # url(r'^admin/', include(admin.site.urls)),
     url(r'^$', lambda x: HttpResponseRedirect('/main/')),
+    url(r'^social/', include('social_auth.urls')),
+    url(r'^login_error/', "main.views.login_error"),
     url(r'login/', main.views.log_in),
     url(r'logout/', main.views.log_out),
     url(r'change_password/', main.views.change_password),

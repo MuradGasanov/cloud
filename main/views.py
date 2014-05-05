@@ -2,6 +2,7 @@
 
 from django.shortcuts import render_to_response, HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.contrib.auth import models as auth_models
 import main.models as models
@@ -9,6 +10,7 @@ from datetime import *
 import json
 
 
+@login_required(redirect_field_name=None)
 def main_page(request):
     """
     возвращает страницу редактирования пользователей, если обычный пользователь, иначе главную страницу
@@ -24,11 +26,13 @@ def log_in(request):
     """
     вход в профиль
     """
+    if request.user.is_authenticated():
+        HttpResponseRedirect("/")
 
     try:
         data = json.loads(request.body)
     except (TypeError, ValueError):
-        return HttpResponseForbidden()
+        return render_to_response("login.html")
 
     username = data.get("login", "")
     password = data.get("password", "")
@@ -46,6 +50,11 @@ def log_in(request):
         return HttpResponse(json.dumps({"error": ["Неверный логин и пароль"]}), content_type="application/json")
 
 
+def login_error(request):
+    return render_to_response("login.html", {"error": "Вы не можете быть авторизованны,"
+                                                      " доступ разрешен только для домена apertura.su"})
+
+
 def log_out(request):
     """
     выходит из профиля
@@ -54,6 +63,7 @@ def log_out(request):
     return HttpResponseRedirect("/")
 
 
+@login_required(redirect_field_name=None)
 def change_password(request):
     item = json.loads(request.POST.get("item"))
 
@@ -91,6 +101,7 @@ class Users():
         pass
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def read(r):
         items = list(
             auth_models.User.objects
@@ -100,6 +111,7 @@ class Users():
         return HttpResponse(js, content_type="application/json")
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def create(r):
         """
         добавление
@@ -127,6 +139,7 @@ class Users():
                             content_type="application/json")
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def destroy(r):
         """
         удаление
@@ -144,6 +157,7 @@ class Users():
         return HttpResponse(json.dumps({}), content_type="application/json")
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def update(r):
         """
         редактирование
@@ -176,6 +190,7 @@ class ProjectTree():
         pass
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def read(request):
         """
         вывод дерева
@@ -241,6 +256,7 @@ class ProjectTree():
             pass
 
         @staticmethod
+        @login_required(redirect_field_name=None)
         def create(request):
             item = json.loads(request.POST.get("item"))
             new_direction = models.Directions.objects.create(
@@ -251,6 +267,7 @@ class ProjectTree():
                                 content_type="application/json")
 
         @staticmethod
+        @login_required(redirect_field_name=None)
         def update(request):
             item = json.loads(request.POST.get("item"))
             direction = models.Directions.objects.get(
@@ -263,6 +280,7 @@ class ProjectTree():
                                 content_type="application/json")
 
         @staticmethod
+        @login_required(redirect_field_name=None)
         def destroy(r):
             """
             удаление
@@ -276,6 +294,7 @@ class ProjectTree():
             pass
 
         @staticmethod
+        @login_required(redirect_field_name=None)
         def get_description(request):
             item = json.loads(request.POST.get("item"))
             project = models.Projects.objects.get(id=int(item.get("id")))
@@ -284,6 +303,7 @@ class ProjectTree():
                                 content_type="application/json")
 
         @staticmethod
+        @login_required(redirect_field_name=None)
         def create(request):
             item = json.loads(request.POST.get("item"))
             new_project = models.Projects.objects.create(
@@ -298,6 +318,7 @@ class ProjectTree():
                                 content_type="application/json")
 
         @staticmethod
+        @login_required(redirect_field_name=None)
         def update(request):
             item = json.loads(request.POST.get("item"))
             project = models.Projects.objects.get(
@@ -313,6 +334,7 @@ class ProjectTree():
                                 content_type="application/json")
 
         @staticmethod
+        @login_required(redirect_field_name=None)
         def destroy(request):
             """
             удаление
@@ -327,6 +349,7 @@ class Nii():
         pass
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def read(request):
         if "item" in request.POST:
             item = json.loads(request.POST.get("item"))
@@ -352,6 +375,7 @@ class Nii():
                                 content_type="application/json")
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def add_project(request):
         item = json.loads(request.POST.get("item"))
         nii = models.Nii.objects.get(id=int(item.get("id")))
@@ -362,6 +386,7 @@ class Nii():
                             content_type="application/json")
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def remove_project(request):
         item = json.loads(request.POST.get("item"))
         nii = models.Nii.objects.get(id=int(item.get("id")))
@@ -371,6 +396,7 @@ class Nii():
                             content_type="application/json")
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def create(request):
         item = json.loads(request.POST.get("item"))
 
@@ -387,6 +413,7 @@ class Nii():
                             content_type="application/json")
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def update(request):
         item = json.loads(request.POST.get("item"))
 
@@ -404,6 +431,7 @@ class Nii():
                             content_type="application/json")
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def destroy(request):
         item = json.loads(request.POST.get("item"))
 
@@ -413,6 +441,7 @@ class Nii():
                             content_type="application/json")
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def get_project(request):
         item = json.loads(request.POST.get("item"))
         nii_id = item.get("id")
@@ -428,6 +457,7 @@ class University():
         pass
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def read(request):
         university = list(
             models.University.objects.all().values("id", "name")
@@ -451,6 +481,7 @@ class Employee():
         pass
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def read(request):
         item = json.loads(request.POST.get("item"))
         nii_id = item.get("id")
@@ -466,6 +497,7 @@ class Employee():
         return HttpResponseForbidden()
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def create(request):
         item = json.loads(request.POST.get("item"))
 
@@ -496,6 +528,7 @@ class Employee():
                             content_type="application/json")
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def update(request):
         item = json.loads(request.POST.get("item"))
 
@@ -526,6 +559,7 @@ class Employee():
                             content_type="application/json")
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def destroy(request):
         item = json.loads(request.POST.get("item"))
 
@@ -540,6 +574,7 @@ class Post():
         pass
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def read(request):
 
         post = list(models.Posts.objects.all().values("id", "name"))
@@ -548,6 +583,7 @@ class Post():
                             content_type="application/json")
 
     @staticmethod
+    @login_required(redirect_field_name=None)
     def get_or_create(post):
         if type(post) == int:
             post = models.Posts.objects.get(id=post)
