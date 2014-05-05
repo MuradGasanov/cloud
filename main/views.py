@@ -585,7 +585,6 @@ class Post():
                             content_type="application/json")
 
     @staticmethod
-    @login_required(redirect_field_name=None)
     def get_or_create(post):
         if type(post) == int:
             post = models.Posts.objects.get(id=post)
