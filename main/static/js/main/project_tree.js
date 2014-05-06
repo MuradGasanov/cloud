@@ -76,13 +76,15 @@ var Project_tree = (function () {
             var direction_validator = $change_direction.kendoValidator(validator_option).data("kendoValidator");
             var $change_direction_window = $("#change_direction_window");
 
-            $project_tree.on("click", ".add_direction", function (e) {
+            function add_direction_handler(e) {
                 $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
                 direction_model.set("is_edit", false);
                 direction_model.set("id", 0);
                 direction_model.set("name", "");
                 $change_direction_window.modal("show");
-            });
+            }
+            $project_tree.on("click", ".add_direction", add_direction_handler);
+            $project_tree.on("dblclick", ".tree_add_direction", add_direction_handler);
 
             $project_tree.on("click", ".edit_direction", function (e) {
                 $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
@@ -175,7 +177,7 @@ var Project_tree = (function () {
             var project_validator = $change_project.kendoValidator(validator_option).data("kendoValidator");
             var $change_project_window = $("#change_project_window");
 
-            $project_tree.on("click", ".add_project", function (e) {
+            function add_project_handler(e) {
                 $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
                 var $this = $(this);
                 node = $this.closest(".k-item");
@@ -187,7 +189,10 @@ var Project_tree = (function () {
                 project_model.set("description", "");
                 project_model.set("direction", dataItem.id);
                 $change_project_window.modal("show");
-            });
+            }
+
+            $project_tree.on("click", ".add_project", add_project_handler);
+            $project_tree.on("dblclick", ".tree_add_project", add_project_handler);
 
             $project_tree.on("click", ".edit_project", function (e) {
                 $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
@@ -257,21 +262,10 @@ var Project_tree = (function () {
                         {item: JSON.stringify(send) },function (data) {
                             noti();
                             project_tree.append(
-                                {
-                                    "id": data.id,
-                                    "name": data.name,
-                                    "type": "project",
-                                    "has_items": true,
+                                {   "id": data.id, "name": data.name, "type": "project", "has_items": true,
                                     "items": [
-                                        {
-                                            "id": data.id,
-                                            "name": "Добавить НИИ",
-                                            "type": "add_nii",
-                                            "has_items": false,
-                                            "items": []
-                                        }
-                                    ]
-                                }, project_tree.parent(node)
+                                      { "id": data.id, "name": "Добавить НИИ", "type": "add_nii", "has_items": false, "items": [] }
+                                    ] }, project_tree.parent(node)
                             );
                             $change_project_window.modal("hide");
                         }, "json").fail(function (data) {
@@ -328,12 +322,14 @@ var Project_tree = (function () {
                 return false;
             }
 
-            $project_tree.on("click", ".add_nii", function (e) {
+            function add_nii_handler(e) {
                 $(".k-widget.k-tooltip.k-tooltip-validation.k-invalid-msg").hide();
                 var $this = $(this);
                 node = $this.closest(".k-item");
                 nii_list_update();
-            });
+            }
+            $project_tree.on("click", ".add_nii", add_nii_handler);
+            $project_tree.on("dblclick", ".tree_add_nii", add_nii_handler);
 
             function find_nii_nodes(id) {
                 var result = [];

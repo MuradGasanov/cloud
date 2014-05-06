@@ -251,10 +251,10 @@
 
     <script id="project_tree_template" type="text/kendo-ui-template">
         # if (item.type.substring(0, 4) == "add_") { #
-            <span class="tree-item tree-add-item">#: item.name #
+            <span class="tree-item tree-add-item tree_#: item.type#">#: item.name #
                 <span class="tree-item-buttons">
                     <span data-id="#: item.id #" class="k-button #: item.type#"><span class="glyphicon glyphicon-plus"></span></span></span>
-                </span>
+            </span>
         # } else if (item.type == "nii") { #
             <span class="tree-item">#: item.name #
                 <span class="tree-item-buttons">
