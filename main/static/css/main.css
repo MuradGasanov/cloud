@@ -38,6 +38,7 @@ html {
 
 .tree-add-item {
     color: #A7A7A7;
+    font-style: italic;
 }
 .k-state-selected .tree-add-item{
     color: #eee;

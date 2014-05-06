@@ -437,7 +437,7 @@ class Nii():
 
         models.Nii.objects.get(id=int(item.get("id"))).delete()
 
-        return HttpResponse("ok",
+        return HttpResponse("{}",
                             content_type="application/json")
 
     @staticmethod
@@ -567,7 +567,7 @@ class Employee():
 
         models.Employees.objects.get(id=item.get("id")).delete()
 
-        return HttpResponse("ok",
+        return HttpResponse("{}",
                             content_type="application/json")
 
 

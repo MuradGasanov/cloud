@@ -64,8 +64,14 @@ var Nii = (function () {
                 },
                 detailTemplate: kendo.template($("#nii_projects_detail_template").html()),
                 detailInit: function (e) {
-                    var detailRow = e.detailRow;
-                    detailRow.find("p").text(e.data.description);
+                    var detailRow = e.detailRow,
+                        description = e.data.description,
+                        p = detailRow.find("p");
+                    if (description.length > 0) {
+                        p.text(description);
+                    } else {
+                        p.text("Описание проекта не задано").css({"font-style": "italic", "color": "#777"});
+                    }
                 },
                 height: 400,
                 sortable: true,
